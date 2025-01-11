@@ -6,11 +6,11 @@ class Node():
 
 
 class StackFrontier():
-    def __init__(self):
-        self.frontier = []
+    def __init__(self, frontier=None):
+        self.frontier = frontier if frontier is not None else []
 
     def add(self, node):
-        self.frontier.append(node)
+        return StackFrontier(self.frontier + [node])
 
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)
@@ -23,16 +23,25 @@ class StackFrontier():
             raise Exception("empty frontier")
         else:
             node = self.frontier[-1]
-            self.frontier = self.frontier[:-1]
-            return node
+            return node, StackFrontier(self.frontier[:-1])
 
 
-class QueueFrontier(StackFrontier):
+class QueueFrontier():
+    def __init__(self, frontier=None):
+        self.frontier = frontier if frontier is not None else []
+
+    def add(self, node):
+        return QueueFrontier(self.frontier + [node])
+
+    def contains_state(self, state):
+        return any(node.state == state for node in self.frontier)
+
+    def empty(self):
+        return len(self.frontier) == 0
 
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
         else:
             node = self.frontier[0]
-            self.frontier = self.frontier[1:]
-            return node
+            return node, QueueFrontier(self.frontier[1:])
